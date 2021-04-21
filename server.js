@@ -14,6 +14,9 @@ const fs = require('fs');
 //path works with fs to create a more predictable file path, especially when working with heroku
 const path = require('path');
 
+//access to the stylesheets and js files in 'public' folder
+app.use(express.static('public'));
+
 // parse incoming string or array data
 app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
@@ -142,6 +145,32 @@ app.post('/api/animals', (req, res) => {
     // res.json(req.body);
     res.json(animal);
   }
+});
+
+// '/' is root route of server, this route is the hompage of the 
+// server so we need to connect it to index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+//animals.html route
+//no /api/ because it helps to stay organized 
+//this let's us know what kind of data is being sent
+//api would be a JSON file, since this is just HTML, we can omit that.
+// this is not a requirement for Express, but good practices.
+app.get('/animals', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+//zookeeper html file routed through server
+app.get('/zookeepers', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+//any route requested in the URL that does not exist will be sent to 
+//index.html homepage, this is the '*' a 'wildcard' if you will.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 //listen method
